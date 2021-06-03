@@ -1,7 +1,7 @@
 { pkgs, ... }: {
   programs.emacs = {
     enable = true;
-    package = pkgs.emacsGcc;
+    package = pkgs.emacs;
     extraPackages = epkgs: [ epkgs.vterm ];
   };
 

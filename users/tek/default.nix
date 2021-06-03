@@ -13,13 +13,13 @@ in
       ../profiles/emacs
       ../profiles/zsh
       ../profiles/i3
+      ../profiles/syncthing
     ];
   };
 
-  programs.zsh.enable = true;
   services.openssh.enable = true;
   programs.ssh.startAgent = true;
-  services.gnome.gnome-keyring.enable = true;
+  # services.gnome.gnome-keyring.enable = true;
   security.pam.services.lightdm.enableGnomeKeyring = true;
 
 
@@ -47,10 +47,4 @@ in
   };
 
 
-  services = {
-    syncthing = {
-      enable = true;
-      user = "tek";
-    };
-  };
 }

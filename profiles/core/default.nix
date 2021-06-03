@@ -31,6 +31,29 @@ in
       usbutils
       utillinux
       whois
+
+      # Extra CLI Tools
+      neovim
+      pandoc
+      wget
+      git
+      neofetch
+      axel
+      aria
+      bat
+      exa
+      tokei
+      viu
+      ripgrep
+      fd
+      fzf
+      tree
+      silver-searcher
+      httplz
+      p7zip
+
+      # Cachix
+      cachix
     ];
 
     shellInit = ''
@@ -99,8 +122,23 @@ in
       };
   };
 
+
   fonts = {
-    fonts = with pkgs; [ powerline-fonts dejavu_fonts ];
+    fonts = with pkgs; [
+      powerline-fonts
+      dejavu_fonts
+
+      font-awesome_4
+      (
+        nerdfonts.override {
+          fonts = [ "JetBrainsMono" "DejaVuSansMono" "FiraCode" "Iosevka" ];
+        }
+      )
+      iosevka
+      twemoji-color-font
+      noto-fonts-emoji-blob-bin
+      emojione
+    ];
 
     fontconfig.defaultFonts = {
 
