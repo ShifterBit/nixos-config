@@ -21,9 +21,14 @@
 
       pkgs.url = "path:./pkgs";
       pkgs.inputs.nixpkgs.follows = "nixos";
+
+      neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+      emacs-overlay.url = "github:nix-community/emacs-overlay";
+      nixpkgs.follows = "nixos";
+
     };
 
-  outputs = inputs@{ self, pkgs, digga, nixos, ci-agent, home, nixos-hardware, nur, ... }:
+  outputs = inputs@{ self, pkgs, digga, nixos, ci-agent, home, nixos-hardware, nur, neovim-nightly-overlay, emacs-overlay, ... }:
     digga.lib.mkFlake {
       inherit self inputs;
 
@@ -36,6 +41,9 @@
             ./pkgs/default.nix
             pkgs.overlay # for `srcs`
             nur.overlay
+            neovim-nightly-overlay.overlay
+            emacs-overlay.overlay
+
           ];
         };
         latest = { };
@@ -72,6 +80,8 @@
         profiles = [ ./profiles ./users ];
         suites = { profiles, users, ... }: with profiles; rec {
           base = [ core users.nixos users.root ];
+          workstation = [ core graphical network ssh develop printing users.tek users.root ];
+
         };
       };
 
@@ -80,7 +90,7 @@
         externalModules = [ ];
         profiles = [ ./users/profiles ];
         suites = { profiles, ... }: with profiles; rec {
-          base = [ direnv git ];
+          base = [ direnv git emacs neovim i3 alacritty ];
         };
       };
 
