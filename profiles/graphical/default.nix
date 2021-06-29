@@ -1,7 +1,6 @@
-{ pkgs, config, ... }:
-
+{ pkgs, config, inputs, ... }:
 {
-  imports = [ ./i3 ./gaming ];
+  # imports = [ ./i3 ./gaming ];
 
   services.xserver.enable = true;
   services.xserver.libinput.enable = true;
@@ -20,6 +19,7 @@
 
   # Enable DConf
   programs.dconf.enable = true;
+
 
   # OpenGL
   hardware.opengl = {
@@ -73,7 +73,7 @@
 
       # Browsers
       brave
-      firefox-bin
+      firefox
       nyxt
 
       # Media
@@ -98,6 +98,10 @@
       # Password Managers
       keepassxc
       keeweb
+
+      # RSS
+      newsflash
+      liferea
 
     ];
 

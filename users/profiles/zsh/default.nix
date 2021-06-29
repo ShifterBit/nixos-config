@@ -57,7 +57,6 @@ in
   };
 
   home.packages = with pkgs; [
-    starship
     autojump
     zsh-completions
     zsh-command-time

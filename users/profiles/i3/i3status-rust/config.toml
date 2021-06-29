@@ -13,9 +13,9 @@ warning = 40
 
 [[block]]
 block = "memory"
+display_type = "memory"
 format_mem = "{mem_used}/{mem_total}({mem_used_percents})"
 format_swap = "{swap_used}/{swap_total}({swap_used_percents})"
-display_type = "memory"
 icons = true
 clickable = true
 interval = 5
@@ -39,7 +39,6 @@ device = "intel_backlight"
 [[block]]
 block = "battery"
 interval = 10
-format = "{percentage:6#100} {percentage} {time}"
 
 [[block]]
 block = "time"

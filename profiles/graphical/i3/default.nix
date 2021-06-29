@@ -18,12 +18,6 @@
     ];
   };
 
-  services.picom = {
-    enable = true;
-    backend = "glx";
-    shadow = true;
-  };
-
   services.autorandr.enable = true;
 
   programs.light.enable = true;

@@ -5,7 +5,7 @@
   services.mongodb.enable = true;
 
   # services.ipfs.enable = true;
-  
+
 
   environment.systemPackages = with pkgs; [
 
@@ -49,6 +49,9 @@
 
     # Debuggers
     gdb
+
+    # Docs
+    zeal
 
   ];
 

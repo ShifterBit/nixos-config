@@ -26,16 +26,16 @@ exec_always feh --bg-fill ~/.config/i3/wall.jpg
 #
 #   output HDMI-A-1 resolution 1920x1080 position 1920,0
 
-workspace 1 output eDP-1
-workspace 2 output eDP-1
-workspace 3 output eDP-1
-workspace 4 output eDP-1
-workspace 5 output eDP-1
-workspace 6 output HDMI-A-1
-workspace 7 output HDMI-A-1
-workspace 8 output HDMI-A-1
-workspace 9 output HDMI-A-1
-workspace 10 output HDMI-A-1
+# workspace 1 output eDP-1
+# workspace 2 output eDP-1
+# workspace 3 output eDP-1
+# workspace 4 output eDP-1
+# workspace 5 output eDP-1
+# workspace 6 output HDMI-A-1
+# workspace 7 output HDMI-A-1
+# workspace 8 output HDMI-A-1
+# workspace 9 output HDMI-A-1
+# workspace 10 output HDMI-A-1
 # You can get the names of your outputs by running: swaymsg -t get_outputs
 
 bindsym Control+mod1+l exec i3lock-fancy
@@ -181,7 +181,6 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 #exec_always autotiling
-exec_always picom -b
 exec_always /nix/store/akxvzhmvbq64i45zfc37khj5zliiq2vp-polkit-gnome-0.105/libexec/polkit-gnome-authentication-agent-1
 
 # Brightness
@@ -200,6 +199,7 @@ bindsym XF86AudioPrev "exec playerctl previous"
 
 # Taking screenshots
 bindsym Print exec flameshot gui
+exec_always "pkill nm-applet; nm-applet"
 
 #
 # Status Bar:

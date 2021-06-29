@@ -1,4 +1,5 @@
-;; init.el --- skeleton config  -*- lexical-binding: t; coding:utf-8; fill-column: 119 -*-
+ ;; init.el --- skeleton config  -*- lexical-binding: t; coding:utf-8; fill-column: 119 -*-
+
 
 ;; Commentary:
 ;; A bare-boned config template. Use "outshine-cycle-buffer" (<Tab> and <S-Tab>
@@ -6,6 +7,7 @@
 ;; use-package definition.
 (setq comp-speed 3
       comp-deferred-compilation t)
+
 
 ;;; Bootstrap
 (server-start)
@@ -18,10 +20,9 @@
 (setq-default indent-tabs-mode nil)
 
 ;;;; Hide native-comp compiler warnings
+(setq warning-minimum-level :error)
 (setq comp-async-report-warnings-errors nil)
 
-;;;; Set Warning level
-(setq warning-minimum-level :error)
 
 ;;;; Make yes or no prompt simpler
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -29,11 +30,15 @@
 ;;;; Always follow symlinks
 (setq vc-follow-symlinks t)
 
-;;;; Speed up startup
-(setq gc-cons-threshold 100000000)
-(setq gc-cons-percentage 0.6)
-(setq read-process-output-max (* 1024 1024))
+(setq gc-cons-threshold 402653184
+      gc-cons-percentage 0.6
+      read-process-output-max (* 1024 1024)
+      file-name-handler-alist nil)
 
+;;;; Use UTF-8 by default
+(prefer-coding-system 'utf-8)
+(setq coding-system-for-read 'utf-8)
+(setq coding-system-for-write 'utf-8)
 
 
 (add-hook 'after-init-hook
@@ -41,6 +46,8 @@
              (setq gc-cons-threshold 100000000
                    gc-cons-percentage 0.1)
              (garbage-collect)) t)
+
+
 
 ;;; Line Numbers
 ;; Enable line numbers for some modes
@@ -76,8 +83,6 @@
 
 (autoload 'straight-x-clean-unused-repos "straight-x" nil t)
 
-(straight-use-package 'use-package)
-
 ;;; Fonts
 ;;;; Setting DIfferent fonts
 (set-face-attribute 'default nil
@@ -90,95 +95,125 @@
 (set-face-attribute 'fixed-pitch nil
                        :font "Iosevka Nerd Font 12"
                        :weight 'regular)
-;;;; Unicode
-(use-package unicode-fonts
-  :straight t)
+;;; Packages
+(straight-use-package 'unicode-fonts)
+(straight-use-package 'dashboard)
+(straight-use-package 'page-break-lines)
+(straight-use-package 'smartparens)
+(straight-use-package 'vertico)
+(straight-use-package 'savehist)
+(straight-use-package 'consult)
+(straight-use-package 'marginalia)
+(straight-use-package 'orderless)
+(straight-use-package 'magit)
+(straight-use-package 'projectile)
+(straight-use-package 'flx)
+(straight-use-package 'perspective)
+(straight-use-package 'persp-projectile)
+(straight-use-package 'eglot)
+(straight-use-package 'tree-sitter)
+(straight-use-package 'tree-sitter-langs)
+(straight-use-package 'corfu)
+(straight-use-package 'eldoc-box)
+(straight-use-package 'paren)
+(straight-use-package 'smartparens)
+(straight-use-package 'lispyville)
+(straight-use-package 'flycheck)
+(straight-use-package 'consult-flycheck)
+(straight-use-package 'direnv)
+(straight-use-package 'rustic)
+(straight-use-package 'nix-mode)
+(straight-use-package 'web-mode)
+(straight-use-package 'json-mode)
+(straight-use-package 'js2-mode)
+(straight-use-package 'typescript-mode)
+(straight-use-package 'haskell-mode)
+(straight-use-package 'cmake-mode)
+(straight-use-package 'esup)
+(straight-use-package 'outshine)
+(straight-use-package 'all-the-icons)
+(straight-use-package 'doom-themes)
+(straight-use-package 'mood-line)
+(straight-use-package 'which-key)
+(straight-use-package 'general)
+(straight-use-package 'markdown-mode)
+(straight-use-package 'org-superstar)
+(straight-use-package 'mixed-pitch)
+(straight-use-package 'visual-fill-column)
+(straight-use-package 'evil)
+(straight-use-package 'undo-fu)
+(straight-use-package 'evil-collection)
+(straight-use-package 'evil-nerd-commenter)
+(straight-use-package 'evil-surround)
+(straight-use-package 'evil-textobj-anyblock)
 
-;;; Frames Only Mode
-(use-package frames-only-mode
-  :straight t
-  :config
-  (frames-only-mode))
-;;; Profiler
 
-(use-package esup
-  :init
-  (setq esup-depth 0)
+;;; Esup
+
+(when (require 'esup nil 'noerror)
+  (setq esup-depth 0))
   
-  :straight t)
+
+;;; Emacs Dashboard
+(when (require 'dashboard nil 'noerror)
+  (setq dashboard-startup-banner 'logo)
+  (setq dashboard-center-content t)
+  (setq dashboard-projects-switch-function 'projectile-persp-switch-project)
+  (setq dashboard-set-init-info t)
+  (setq dashboard-set-navigator t)
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-week-agenda t)
+  (setq dashboard-items '((recents  . 5)
+                          (projects . 5)
+                          (agenda . 5)))
+  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+  (dashboard-setup-startup-hook))
+
 
 ;;; Outshine mode
-(use-package outshine
-  :defer t
-  ;; Easier navigation for source files, especially this one.
-  :bind (:map outshine-mode-map
-              ("<S-iso-lefttab>" . outshine-cycle-buffer)
-              ("<tab>" . outshine-cycle)))
+(when (require 'outshine nil 'noerror)
+  (define-key outshine-mode-map (kbd "<tab>") 'outshine-cycle)
+  (define-key outshine-mode-map (kbd "<S-iso-leftab>") 'outshine-cycle-buffer))
 
 ;;; Appearance
-(use-package all-the-icons
-  :straight t
-  :config
-  (setq all-the-icons-scale-factor 1.0))
-;;;; Emojis
-(use-package emojify
-  :defer 1
-  :straight t)
+(when (require 'all-the-icons nil 'noerror)
+(setq all-the-icons-scale-factor 1.0))
+
 ;;;; Color Themes
-(use-package doom-themes
-  :config
-  ;; Global settings (defaults)
+(when (require 'doom-themes nil 'noerror)
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
         doom-themes-enable-italic t) ; if nil, italics is universally disabled
   (load-theme 'doom-nord t)
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
  
-;;;; Dired
-(use-package all-the-icons-dired
-  :hook (dired-mode . all-the-icons-dired-mode)
-  :straight t)
 ;; ;;;; Modeline
-(use-package mood-line
-  :straight t
-  :config
-  (mood-line-mode))
+(when (require 'mood-line nil 'noerror)
+(mood-line-mode))
 
 ;;; Keybindings
 ;;;; Which-Key
-(use-package which-key
-  :straight t
-  :init (which-key-mode)
-  :diminish which-key-mode
-  :config
+(when (require 'which-key nil 'noerror)
+  (which-key-mode)
   (setq which-key-idle-delay 0.3))
+
 ;;;; General Leader Keybindings
-(use-package general
-  :straight t
-  :config
-;;;;; Configuration
-  (general-evil-setup t)
+(when (require 'general nil 'noerror)
   (general-create-definer leader-key-def
     :keymaps '(normal insert visual emacs)
     :prefix "SPC"
     :global-prefix "C-SPC")
-  (general-create-definer localleader-key-def
-    :keymaps 'override
-    :states '(emacs normal hybrid motion visual operator)
-    :prefix "SPC m"
-    "" '(:ignore t :which-key (lambda (arg) `(,(cadr (split-string (car arg) " ")) . ,(replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))))
-;;;;;; Projectile
-  (leader-key-def
+(leader-key-def
     "p"   '(:ignore t :which-key "project")
     "pf"  '(projectile-find-file :which-key "find file")
-                                        ;"SPC"  '(counsel-projectile-find-file :which-key "find file")
     "pp"  '(projectile-persp-switch-project :which-key "switch project")
     "pi"  '(projectile-ag :which-key "search project symbols")
     "pF"  '(projectile-rg :which-key "search project")
     "pa"  '(projectile-add-known-project :which-key "add project")
-    "pd"  '(projectile-remove-known-project :which-key "remove project"))
-;;;;;; Magit 
-  (leader-key-def
+    "pd"  '(projectile-remove-known-project :which-key "remove project")) 
+
+(leader-key-def
     "g"   '(:ignore t :which-key "git")
     "gg"  'magit-status
     "gd"  '(magit-diff-unstaged)
@@ -193,21 +228,21 @@
     "gf"  '(magit-fetch :which-key "fetch")
     "gF"  '(magit-fetch-all :which-key "fetch all")
     "gr"  '(magit-rebase :which-key "rebase"))
-;;;;;; Files
-  (leader-key-def
+
+(leader-key-def
     "f" '(:ignore t :which-key "files")
     "ff" '(find-file :which-key "find file")
     "fb" '(consult-buffer :which-key "find file")
     "fr" '(consult-recent-file :which-key "recent files"))
-;;;;;; Search
-  (leader-key-def
+
+(leader-key-def
     "s" '(:ignore t :which-key "search")
     "ss" '(consult-isearch :which-key "ibuffer")
     "si" '(consult-line :which-key "buffer")
     "sd" '(dired-jump :which-key "directory")
     "sp" '(projectile-switch-project :which-key "projects"))
-;;;;;; LSP  
-  (leader-key-def
+
+(leader-key-def
     "c" '(:ignore t :which-key "code")
     "cf" '(eglot-format :which-key "format")
     "ci" '(consult-imenu :which-key "jump to symbol")
@@ -222,282 +257,172 @@
     "cep" '(previous-error :which-key "prevous error")
     "ca" '(eglot-code-action-quickfix :which-key "code-actions"))
 
-;;;;;; Workspaces
-  (leader-key-def
+(leader-key-def
     "w"  '(:ignore t :which-key workspaces)
     "wb" '(persp-switch-to-buffer :which-key "switch buffer")
     "wn" '(persp-next :which-key "next workspace")
     "wk" '(persp-kill :which-key "delete workspace")
     "ws" '(persp-switch :which-key "switch workspace"))
-;;;;;; Evil   
-  (general-evil-setup t)
+
+(leader-key-def
+      "o"   '(:ignore t :which-key "org mode")
+
+      "oi"  '(:ignore t :which-key "insert")
+      "oil" '(org-insert-link :which-key "insert link")
+
+      "on"  '(org-toggle-narrow-to-subtree :which-key "toggle narrow")
+
+      "oa"  '(org-agenda :which-key "status")
+      "ot"  '(org-todo-list :which-key "todos")
+      "oc"  '(org-capture t :which-key "capture")
+      "ox"  '(org-export-dispatch t :which-key "export"))
+
+(general-evil-setup t)
   (general-mmap
     "j" 'evil-next-visual-line
     "gc" 'evilnc-comment-operator
     "k" 'evil-previous-visual-line)
-;;;;;; Evaluating Lisp
+
   (leader-key-def
     "e"   '(:ignore t :which-key "eval")
     "eb"  '(eval-buffer :which-key "eval buffer"))
+
   (leader-key-def
     :keymaps '(visual)
     "er" '(eval-region :which-key "eval region")))
-;;;; Hydra
-(use-package hydra
-  :straight t)
+  
 ;;;; Evil
-(use-package evil
-  :straight t
-  :defer 0.5
-  :init
+(when (require 'evil)
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
   (setq evil-want-C-u-scroll t)
   (setq evil-want-C-i-jump nil)
   (setq evil-respect-visual-line-mode t)
   (setq evil-undo-system 'undo-fu)
-  :config
-  (evil-mode 1)
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
   (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
-  (evil-set-initial-state 'messages-buffer-mode 'normal))
+  (evil-set-initial-state 'messages-buffer-mode 'normal)
+  (evil-mode 1)
 
-(use-package evil-nerd-commenter
-  :straight t
-  :after evil
-  :defer 0.5
-  :config
+  (when (require 'evil-nerd-commenter)
   (evilnc-default-hotkeys))
-
-(use-package evil-surround
-  :straight t
-  :after evil
-  :config
+  (when (require 'evil-surround)
   (global-evil-surround-mode 1))
-
-(use-package evil-textobj-anyblock
-  :straight t
-  :after evil
-  :defer 0.5)
-
-(use-package evil-collection
-  :after evil
-  :init
+  (when (require 'evil-collection)
   (setq evil-collection-company-use-tng nil)  ;; Is this a bug in evil-collection?
-  :custom
-  (evil-collection-outline-bind-tab-p nil)
-  :config
-  (evil-collection-init))
-
-;;;;; Undo
-(use-package undo-fu
-  :after evil
-  :straight t
-  :config
+  (evil-collection-init)
+  (setq evil-collection-outline-bind-tab-p nil))
+  (when (require 'undo-fu)
   (define-key evil-normal-state-map "u" 'undo-fu-only-undo)
-  (define-key evil-normal-state-map "\C-r" 'undo-fu-only-redo))
+  (define-key evil-normal-state-map "\C-r" 'undo-fu-only-redo)))
+
+
 
 ;;;; Parenthesis
-
 ;;;;; Smart Parens
-(use-package smartparens
-  :straight t
-  :hook (prog-mode . smartparens-mode))
+;; (add-hook prog-mode-hook #'smartparens-mode)
 
-;;; Vertico
-(use-package vertico
-  :straight t
-  :bind (:map vertico-map
-         ("C-j" . vertico-next)
-         ("C-k" . vertico-previous)
-         ("C-f" . vertico-exit)
-         :map minibuffer-local-map
-         ("M-h" . backward-kill-word))
-  :custom
-  (vertico-cycle t)
-  :init
-  (vertico-mode))
-(use-package savehist
-  :init
-  (savehist-mode))
+;;; Completion
+;;;; Vertico
+(when (require 'vertico nil 'noerror)
+  (vertico-mode)
+  (define-key vertico-map (kbd "C-j") 'vertico-next)
+  (define-key vertico-map (kbd "C-k") 'vertico-previous)
+  (define-key vertico-map (kbd "C-f") 'vertico-exit))
 
-(use-package emacs
-  :init
-  ;; Add prompt indicator to `completing-read-multiple'.
-  (defun crm-indicator (args)
-    (cons (concat "[CRM] " (car args)) (cdr args)))
-  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
-
-  ;; Grow and shrink minibuffer
-  ;;(setq resize-mini-windows t)
-
-  ;; Do not allow the cursor in the minibuffer prompt
-  (setq minibuffer-prompt-properties
-        '(read-only t cursor-intangible t face minibuffer-prompt))
-  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-
-  ;; Enable recursive minibuffers
-  (setq enable-recursive-minibuffers t))
+(savehist-mode)
 
 ;;;; Consult
-(use-package consult
-  :straight t
-  :config
+(when (require 'consult nil 'noerror)
   (autoload 'projectile-project-root "projectile")
   (setq consult-project-root-function #'projectile-project-root)
   (setq consult-preview-key nil))
-(use-package consult-flycheck
-  :straight t
-  :defer 1)
+  (if (featurep 'flycheck)
+
 ;;;; Marginalia
-(use-package marginalia
-  :straight t
-  :init
+(marginalia-mode)
+(when (require 'marginalia nil 'noerror)
   (setq-default marginalia-annotators '(marginalia-annotators-heavy))
-  :config
-  (marginalia-mode))
+  (marginalia-mode t))
+
 ;;;; Ordering
 ;;;;; Orderless
-(use-package orderless
-  :straight t
-  :config
+(when  (require 'orderless nil 'noerror)
   (savehist-mode)
- (setq completion-styles '(orderless)
-         completion-category-defaults nil
-         completion-category-overrides '((file (styles . (partial-completion))))
-         orderless-component-separator "[ &]"
-         selectrum-refine-candidates-function #'orderless-filter
-         selectrum-highlight-candidates-function #'orderless-highlight-matches)
- (setq completion-styles '(orderless)))
+  (setq completion-styles '(orderless)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles . (partial-completion))))
+          orderless-component-separator "[ &]"
+          selectrum-refine-candidates-function #'orderless-filter
+          selectrum-highlight-candidates-function #'orderless-highlight-matches)
+  (setq completion-styles '(orderless)))
 
 ;;;;; Magit
-(use-package magit
-  :straight t
-  :commands (magit-status magit-get-current-branch)
-  :custom
+(when (require 'magit nil 'noerror)
   (setq auto-revert-check-vc-info t)
-  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-
+  (autoload #'magit-status "magit" nil t)
+  (autoload #'magit-status "magit" nil t))
 
 ;;;; FLX
-(use-package flx
-  :straight t)
-;;;; Helpful
-(use-package helpful
-  :straight t
-  :defer 1)
 
 ;;; Projectile
-(use-package projectile
-  :straight t
-  :defer 0.5
-  :after general
-  :config
+(when (require 'projectile)
   (defun my-projectile-project-find-function (dir)
     (let ((root (projectile-project-root dir)))
       (and root (cons 'transient root))))
-
   (with-eval-after-load 'project
     (add-to-list 'project-find-functions 'my-projectile-project-find-function))
-  (projectile-mode))
+  (projectile-mode)))
+
 
 ;;; Workspaces
-(use-package perspective
-  :straight t
-  :custom
-  (persp-initial-frame-name "main")
-  :config
-  ;; Running `persp-mode' multiple times resets the perspective list...
+(when (require 'perspective nil 'noerror) 
   (unless (equal persp-mode t)
     (persp-mode)))
-(use-package persp-projectile
-  :after perspective
-  :defer 0.5
-  :straight t)
+
 ;;; Programming
 ;;;; Language Server Protocol
-(use-package eglot
-  :commands (eglot-ensure eglot)
-  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         (js2-mode . eglot-ensure)
-         (typescript-mode . eglot-ensure)
-         (c-mode . eglot-ensure)
-         (c++-mode . eglot-ensure)
-         (rustic-mode . eglot-ensure)))
-  
- 
+(with-eval-after-load 'eglot
+  (autoload #'eglot "eglot" nil t)
+  (autoload #'eglot-ensure "eglot" nil t))
+  (add-hook 'js2-mode-hook #'eglot-ensure)
+  (add-hook 'typescript-mode-hook #'eglot-ensure)
+  (add-hook 'c-mode-hook #'eglot-ensure)
+  (add-hook 'c++-mode-hook #'eglot-ensure)
 
 ;;;; Treesitter
-(use-package tree-sitter
-  :straight t
-  :defer 0.5
-  :config
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
-  (global-tree-sitter-mode))
-(use-package tree-sitter-langs
-  :straight t
-  :after tree-sitter)
+(global-tree-sitter-mode)
 
 ;;;; Code Completion
-(use-package company
-  :straight t
-  :hook (prog-mode . company-mode)
-  :bind (:map company-active-map
-         ("<tab>" . company-complete-common-or-cycle)
-         ("<backtab>" . company-select-previous))
-  :config
-  (setq company-dabbrev-downcase 0)
-  (setq company-idle-delay 0.0)
-  (setq company-minimum-prefix-length 1))
+(with-eval-after-load 'corfu
+  (setq corfu-cycle t)            ;; Enable cycling for `corfu-next/previous'
+  (setq corfu-auto t)             ;; Enable auto completion
+  (setq corfu-quit-at-boundary t) ;; Automatically quit at word boundary
+  (setq corfu-quit-no-match t)    ;; Automatically quit if there is no match
+  (define-key corfu-map (kbd "TAB") 'corfu-next)
+  (define-key corfu-map (kbd "<tab>") 'corfu-next)
+  (define-key corfu-map (kbd "S-TAB") 'corfu-next)
+  (define-key corfu-map (kbd "<backtab>") 'corfu-next))
+  (add-hook 'prog-mode-hook #'corfu-mode)
+  (add-hook 'shell-mode-hook #'corfu-mode)
+  (add-hook 'eshell-mode-hook #'corfu-mode)
 
-(use-package company-box
-  :straight t
-  :hook (company-mode . company-box-mode)
-  :config
-  (setq company-box-doc-enable nil))
-  
-;;; Code Snippets
-(use-package yasnippet
-  :straight t
-  :hook (prog-mode . yas-minor-mode)
-  :config
-  (yas-reload-all))
-(use-package yasnippet-snippets
-  :straight t
-  :after yasnippet)
+;;;; Documentation
+(add-hook 'eldoc-mode-hook #'eldoc-box-hover-at-point-mode)
 
 ;;;; Brackets/Parenthesis
 ;;;;; Highlight Matching Brackets
-(use-package paren
-  :straight t
-  :defer 2
-  :config
+(when (require 'paren nil 'noerror)
   (set-face-attribute 'show-paren-match-expression nil :background "#363e4a")
   (show-paren-mode 1))
-;;;;; Rainbow Brackets
-(use-package rainbow-delimiters
-  :straight t
-  :hook (prog-mode . rainbow-delimiters-mode)
-  :defer 2)
-;;;;; Parinfer
-(use-package parinfer-rust-mode
-  :after evil
-  :straight t
-  :hook ((clojure-mode . parinfer-rust-mode)
-         (emacs-lisp-mode . parinfer-rust-mode)
-         (common-lisp-mode . parinfer-rust-mode)
-         (scheme-mode . parinfer-rust-mode)
-         (lisp-mode . parinfer-rust-mode)))
 
+;;;;; Lispyville
+(add-hook 'emacs-lisp-mode-hook #'lispyville-mode)
 
-;;;; Error Checking
-(use-package flycheck
-  :straight t
-  :hook (prog-mode . flycheck-mode)
-  :config
+;;;; Error Checking with Flycheck
+(with-eval-after-load 'flycheck
+
   (defvar-local flycheck-eglot-current-errors nil)
-
   (defun flycheck-eglot-report-fn (diags &rest _)
     (setq flycheck-eglot-current-errors
           (mapcar (lambda (diag)
@@ -529,7 +454,7 @@
 
   (push 'eglot flycheck-checkers)
 
-  (defun sanityinc/eglot-prefer-flycheck ()
+  (defun eglot-prefer-flycheck ()
     (when eglot--managed-mode
       (flycheck-add-mode 'eglot major-mode)
       (flycheck-select-checker 'eglot)
@@ -537,72 +462,71 @@
       (flymake-mode -1)
       (setq eglot--current-flymake-report-fn 'flycheck-eglot-report-fn)))
 
-  (add-hook 'eglot--managed-mode-hook 'sanityinc/eglot-prefer-flycheck))
-
-  
+  (add-hook 'eglot--managed-mode-hook 'eglot-prefer-flycheck))
+  (add-hook 'prog-mode-hook #'flycheck-mode)
 
 ;;;; Direnv
-(use-package direnv
-  :straight t
-  :config
-  (direnv-mode))
+(direnv-mode)
+
 ;;;; Languages
 ;;;;; Rust
-(use-package rustic
-  :straight t
-  :defer 1)
-;;;;; Nix
-(use-package nix-mode
-  :straight t
-  :mode "\\.nix\\'")
+(with-eval-after-load 'rustic
+    (setq rustic-format-on-save t)
+    (setq rustic-lsp-client 'eglot))
+
 ;;;;; HTML/CSS
-(use-package web-mode
-  :straight t
-  :mode "(\\.\\(html?\\|ejs\\|tsx\\|jsx\\)\\'"
-  :config
-  (setq-default web-mode-code-indent-offset 2)
-  (setq-default web-mode-markup-indent-offset 2)
-  (setq-default web-mode-attribute-indent-offset 2))
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+(setq-default web-mode-code-indent-offset 2)
+(setq-default web-mode-markup-indent-offset 2)
+(setq-default web-mode-attribute-indent-offset 2)
+
 ;;;;; JSON
-(use-package json-mode
-  :straight t
-  :mode "\\.json\\'")
+(add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
+
 ;;;;; Javascript
-(use-package js2-mode
-  :straight t
-  :mode "\\.jsx?\\'"
-  :config
-  (setq js-indent-level 2))
+(add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-mode))
+(setq js-indent-level 2)
+
 ;;;;; Typescript
-(use-package typescript-mode
-  :straight t
-  :mode "\\.tsx?\\'"
-  :config
-  (setq typescript-indent-level 2))
-;;;;; Haskell
-(use-package haskell-mode
-  :straight t
-  :mode "\\.hs\\'")
-;;;;; CMake
-(use-package cmake-mode
-  :defer 1
-  :straight t)
-;;; Org Mode
-;;;; Configuration
-(use-package org
-  :straight t
-  :defer 0.5
-  :config
+(add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescript-mode))
+(setq typescript-indent-level 2)
+(
+;;; Markdown
+(add-to-list 'auto-mode-alist
+            '("README\\.md\\'" . gfm-mode))
+(add-to-list 'auto-mode-alist
+            '("\\.md\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist
+            '("\\.markdown\\'" . markdown-mode))
+;;; Org
+;; Turn on indentation and auto-fill mode for Org files
+(defun org-mode-setup ()
+  (org-indent-mode)
+  (variable-pitch-mode 1)
+  (auto-fill-mode 0)
   (visual-line-mode 1)
+  (setq evil-auto-indent nil)
+  (diminish org-indent-mode))
+
+
+(defun org-mode-visual-fill ()
+  (setq visual-fill-column-width 100
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+;;;; Enable Org Mode
+(with-eval-after-load 'org
   (setq org-agenda-files
-        '(
-          "~/Org/gtd.org"))
-          
-  (setq org-capture-templates '(("t" "Todo [inbox]" entry
-                                 (file+headline "~/Org/inbox.org" "Tasks")
-                                 "* TODO %i%?")))
-  (setq org-refile-targets '(("~/Org/gtd.org" :maxlevel . 3)))
-  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "NEXT(w)" "PROJ" "|" "DONE(d)" "CANCELLED(c)")))
+        '("~/Org/projects.org"
+          "~/Org/todos.org"
+          ))
+  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "NEXT(w)" "|" "DONE(d)" "CANCELLED(c)")))
   (setq org-agenda-start-with-log-mode t)
   (setq org-log-done 'time)
   (setq org-log-into-drawer t)
@@ -614,55 +538,19 @@
   (setq org-hide-block-startup nil)
   (setq org-src-preserve-indentation nil)
   (setq org-startup-folded 'content)
-  (setq org-cycle-separator-lines 2))
-;;;; Enable Org Bullets
-(use-package org-superstar
-  :straight t
-  :hook (org-mode)
-  :config
-  (setq org-superstar-special-todo-items t)
-  (org-superstar-mode))
+  (setq org-cycle-separator-lines 2)
+  (add-hook 'org-mode-hook #'org-mode-setup)
+  (add-hook 'org-mode-hook #'mixed-pitch-mode)
+  (add-hook 'org-mode-hook #'org-superstar-mode)
+  (add-hook 'org-mode-hook #'org-mode-visual-fill)
+  (setq org-superstar-special-todo-items t))
 
 
+
+(setq gc-cons-threshold 16777216
+             gc-cons-percentage 0.1)
 (setq file-name-handler-alist temp--file-name-handler-alist)
-
-;;; Org Mode
-(use-package markdown-mode
-  :straight t
-  :mode (("README\\.md\\'" . gfm-mode)
-         ("\\.md\\'" . markdown-mode)
-         ("\\.markdown\\'" . markdown-mode))
-  :init (setq markdown-command "multimarkdown"))
-
 (provide 'init)
 ;;; init.el ends here
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("e3b2bad7b781a968692759ad12cb6552bc39d7057762eefaf168dbe604ce3a4b" "a3bdcbd7c991abd07e48ad32f71e6219d55694056c0c15b4144f370175273d16" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" default))
- '(mood-line-mode t))
-(custom-set-faces)
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- 
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- 
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- 
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
  
