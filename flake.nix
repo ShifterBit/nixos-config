@@ -80,8 +80,19 @@
         profiles = [ ./profiles ./users ];
         suites = { profiles, users, ... }: with profiles; rec {
           base = [ core users.nixos users.root ];
-          workstation = [ core network ssh develop printing users.tek users.root graphical graphical.awesome graphical.gaming ];
-
+          workstation = [
+            core
+            network
+            ssh
+            develop
+            printing
+            users.tek
+            users.root
+            graphical
+            graphical.awesome
+            graphical.xfce
+            graphical.gaming
+          ];
         };
       };
 

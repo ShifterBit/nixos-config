@@ -1,6 +1,5 @@
 { pkgs, config, inputs, ... }:
 {
-  # imports = [ ./i3 ./gaming ];
 
   services.xserver.enable = true;
   services.xserver.libinput.enable = true;
@@ -38,19 +37,6 @@
   ];
 
   environment = {
-
-    etc = {
-      "xdg/gtk-3.0/settings.ini" = {
-        text = ''
-          [Settings]
-          gtk-icon-theme-name=Papirus
-          gtk-theme-name=Materia-dark
-          gtk-cursor-theme-name=Adwaita
-        '';
-        mode = "444";
-      };
-    };
-
     systemPackages = with pkgs; [
       ffmpeg-full
       gnome3.adwaita-icon-theme
